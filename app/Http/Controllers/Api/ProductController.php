@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreProductRequest;
 use App\Models\Product;
-use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -42,12 +40,15 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductRequest $request)
+    public function store(Request $request)
     {
         try {
 
             // product validation 
-            $validatedProduct = $request->validated();
+            $validatedProduct = $request->validate([
+                'name' => 'required|min:3',
+                'description' => 'required|min:3',
+            ]);
 
             $dataProduct = Product::create([
                 'name' => $validatedProduct['name'],

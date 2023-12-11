@@ -3,22 +3,28 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterRequest;
+// use App\Http\Requests\RegisterRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-
+use Illuminate\Support\Facades\Redis;
 
 class AuthController extends Controller
 {
 
 
     // api register function   
-    public function register(RegisterRequest $registerUserRequest)
+    public function register(Request $registerUserRequest)
     {
         try {
 
-            $dataRegisterValidated = $registerUserRequest->validated();
+            $dataRegisterValidated = $registerUserRequest->validate([
+                'username' => 'required|min:3',
+                'email' => 'required|email',
+                'password' => 'required|min:5',
+                'confirm_password' => 'required|same:password',
+                'profile_picture_name' => 'image|mimes:jpg,jpeg,png|max:1024',
+            ]);
             $nameProfilePictureDefault = '';
 
             $exitingUsername = User::where('username', $dataRegisterValidated['username'])->first();
